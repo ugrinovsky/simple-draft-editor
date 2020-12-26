@@ -48,6 +48,10 @@ function getLinkComponent() {
                         <span className="linkTitle">{children}</span>
                     </a>
                 );
+            } else {
+                return (
+                    <span>{children}</span>
+                )
             }
         }
     };

@@ -1,69 +1,55 @@
 import React from 'react';
-import {EditorState, RichUtils} from "draft-js";
 
 import ToolbarButton from '../ToolbarButton';
+import ColorPanel from "../ColorPanel";
 
-export const toolbarStyleMap = {
-    CODE: {
-        backgroundColor: '#ccc',
-        padding: '3px',
-        borderRadius: '3px',
-        fontFamily: 'source-code-pro, Menlo, Monaco, Consolas, Courier New, monospace'
-    }
-}
+import {default as inlineButtons} from './buttons/inline';
+import {default as complexButtons} from './buttons/complex';
+import ToolbarColorButton from "../ToolbarColorButton";
 
 class Toolbar extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {colorPanelVisible: false};
+
+        this.buttons = [...inlineButtons, ...complexButtons];
     }
 
-    customStyleHandler = (editorState, style) => {
-        const selection = editorState.getSelection();
-
-        // новое состояние
-        let nextEditorState = EditorState.push(
-            editorState,
-            editorState.getCurrentContent(),
-            'change-inline-style'
-        );
-
-        const currentStyle = editorState.getCurrentInlineStyle();
-
-        // если текст не выделен, включим или отключим формат
-        if (selection.isCollapsed()) {
-            nextEditorState = currentStyle.reduce((state, style) => {
-                return RichUtils.toggleInlineStyle(state, style);
-            }, nextEditorState);
-        }
-
-        // применим формат
-        if (!currentStyle.has(style)) {
-            nextEditorState = RichUtils.toggleInlineStyle(
-                nextEditorState,
-                style
-            );
-        }
-
-        this.props.updateState(nextEditorState);
+    toggleColorPanel = (editorState, format) => {
+        this.setState({colorPanelVisible: !this.state.colorPanelVisible});
     }
 
-    simpleStyleHandler = (editorState, format) => {
-        this.props.updateState(RichUtils.toggleInlineStyle(editorState, format));
+    handleBlur = () => {
+        this.setState({colorPanelVisible: false});
+    }
+
+    backgroundHandler = (color) => {
+        this.customStyleHandler(this.props.editorState, color);
     }
 
     render() {
         return (
             <div className="toolbar">
-                <ToolbarButton
-                    title="Код"
-                    format="CODE"
-                    editorState={this.props.editorState}
-                    handler={this.customStyleHandler} />
-                <ToolbarButton
-                    title="Жирный"
-                    format="BOLD"
-                    editorState={this.props.editorState}
-                    handler={this.simpleStyleHandler} />
+                {this.buttons.map(button => {
+                    if (button.type === 'simple') {
+                        return <ToolbarButton
+                            key={button.title}
+                            title={button.title}
+                            format={button.format}
+                            updateStateCallback={this.props.updateStateCallback}
+                            editorState={this.props.editorState}
+                            handler={button.handler} />
+                    } else if (button.type === 'color') {
+                        return <ToolbarColorButton
+                            key={button.title}
+                            title={button.title}
+                            format={button.format}
+                            updateStateCallback={this.props.updateStateCallback}
+                            editorState={this.props.editorState}
+                            handler={button.handler} />
+                    }
+                })}
             </div>
         );
     }

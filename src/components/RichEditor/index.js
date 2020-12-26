@@ -7,15 +7,11 @@ import constants from '../../constants';
 
 import linkDecorator from '../../decorators/Link';
 
-import Toolbar, {toolbarStyleMap} from '../Toolbar';
+import Toolbar from '../Toolbar';
 
-import {
-    handleDraftEditorPastedText
-} from "draftjs-conductor";
+import {handleDraftEditorPastedText} from "draftjs-conductor";
 
-const customStyleMap = {
-    ...toolbarStyleMap
-};
+import {styleMap} from '../Toolbar/buttons';
 
 class RichEditor extends React.Component {
     constructor(props) {
@@ -44,8 +40,8 @@ class RichEditor extends React.Component {
 
     createLinkEntity = (createEntity, url) => {
         return createEntity(
-            "LINK",
-            "MUTABLE",
+            'LINK',
+            'MUTABLE',
             { url }
         );
     }
@@ -122,12 +118,12 @@ class RichEditor extends React.Component {
         return (
             <div>
                 <Toolbar
-                    updateState={this.updateState}
+                    updateStateCallback={this.updateState}
                     editorState={this.state.editorState} />
                 <div className="editor">
                     <Editor
                         handlePastedText={this.handlePastedText}
-                        customStyleMap={customStyleMap}
+                        customStyleMap={styleMap}
                         handleKeyCommand={this.handleKeyCommand}
                         editorState={this.state.editorState}
                         onChange={this.updateState} />

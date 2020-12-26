@@ -1,22 +1,23 @@
 import React from 'react';
 import './styles.css';
 
-class MarkButton extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    isMarkActive = (editorState, format) => {
+class ToolbarButton extends React.Component {
+    isButtonActive = (editorState, format) => {
         return editorState.getCurrentInlineStyle().has(format);
     }
 
     render() {
+        const isButtonActive = this.isButtonActive(this.props.editorState, this.props.format);
         return (
             <div
-                className={`toolbarButton ${this.isMarkActive(this.props.editorState, this.props.format) ? 'toolbarButtonActive' : ''}`}
+                className={`toolbarButton ${isButtonActive ? 'toolbarButtonActive' : ''}`}
                 onMouseDown={event => {
-                    event.preventDefault()
-                    this.props.handler(this.props.editorState, this.props.format)
+                    event.preventDefault();
+                    this.props.handler(
+                        this.props.editorState,
+                        this.props.updateStateCallback,
+                        this.props.format
+                    );
                 }}
             >
                 {this.props.title}
@@ -25,4 +26,4 @@ class MarkButton extends React.Component {
     }
 }
 
-export default MarkButton;
+export default ToolbarButton;
