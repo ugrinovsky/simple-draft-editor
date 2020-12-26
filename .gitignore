@@ -26,5 +26,4 @@ yarn-error.log*
 package-lock.json
 yarn.lock
 .idea
-public
 README.old.md
