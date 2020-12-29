@@ -1,5 +1,5 @@
 import React from 'react';
-import {Editor, EditorState, RichUtils, CompositeDecorator, Modifier} from 'draft-js';
+import {Editor, EditorState, RichUtils, CompositeDecorator, Modifier, convertToRaw} from 'draft-js';
 
 import './styles.css';
 
@@ -22,6 +22,14 @@ class RichEditor extends React.Component {
             editorState: EditorState.createEmpty(compositeDecorator)
         };
         this.updateState = editorState => this.setState({ editorState });
+
+        this.editor = React.createRef();
+
+        this.id = this.props.id;
+    }
+
+    componentDidMount() {
+        this.editor.current?.focus();
     }
 
     updateState = (editorState) => {
@@ -107,6 +115,18 @@ class RichEditor extends React.Component {
         return false;
     }
 
+    onFocusCallback = () => {
+        this.props.onFocusCallback && this.props.onFocusCallback({
+            instance: this.editor,
+            id: this.id,
+            value: convertToRaw(this.state.editorState.getCurrentContent())
+        });
+    }
+
+    onKeyDownCallback = (event) => {
+        this.props.onKeyDownHandler && this.props.onKeyDownHandler(event);
+    }
+
     getCompositeDecorator = toolbar => {
         const decorators = [
             linkDecorator()
@@ -117,20 +137,28 @@ class RichEditor extends React.Component {
     render () {
         return (
             <div>
-                <Toolbar
+                {this.props.toolbarVisibility && <Toolbar
                     updateStateCallback={this.updateState}
-                    editorState={this.state.editorState} />
-                <div className="editor">
+                    editorState={this.state.editorState} />}
+                <div className="editor" style={{minHeight: this.props.height}}>
                     <Editor
+                        ref={this.editor}
                         handlePastedText={this.handlePastedText}
                         customStyleMap={styleMap}
                         handleKeyCommand={this.handleKeyCommand}
                         editorState={this.state.editorState}
-                        onChange={this.updateState} />
+                        onChange={this.updateState}
+                        keyBindingFn={this.onKeyDownCallback}
+                        onFocus={this.onFocusCallback}/>
                 </div>
             </div>
         );
     }
+}
+
+RichEditor.defaultProps = {
+    height: '300px',
+    toolbarVisibility: true
 }
 
 export default RichEditor;
