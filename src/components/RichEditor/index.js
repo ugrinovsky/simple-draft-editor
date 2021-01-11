@@ -1,5 +1,5 @@
 import React from 'react';
-import {Editor, EditorState, RichUtils, CompositeDecorator, Modifier, convertToRaw} from 'draft-js';
+import {Editor, EditorState, RichUtils, CompositeDecorator, Modifier, convertToRaw, getDefaultKeyBinding} from 'draft-js';
 
 import './styles.css';
 
@@ -124,7 +124,11 @@ class RichEditor extends React.Component {
     }
 
     onKeyDownCallback = (event) => {
-        this.props.onKeyDownHandler && this.props.onKeyDownHandler(event);
+        if (this.props.onKeyDownHandler) {
+            this.props.onKeyDownHandler(event);
+        } else {
+            return getDefaultKeyBinding(event);
+        }
     }
 
     getCompositeDecorator = toolbar => {

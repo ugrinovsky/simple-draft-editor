@@ -3,7 +3,7 @@
     box-sizing: border-box;
     border: 1px solid #000;
     width: 1000px;
-    /* display: flex; */
+     display: flex;
     word-break: break-all;
     margin-bottom: 4px;
 }
@@ -11,6 +11,6 @@
 .DraftEditor-root,
 .DraftEditor-editorContainer,
 .public-DraftEditor-content {
-    /* display: flex;
-    flex-grow: 1; */
+    display: flex;
+    flex-grow: 1;
 }
